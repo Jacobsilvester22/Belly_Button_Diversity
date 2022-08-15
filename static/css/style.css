@@ -1,0 +1,18 @@
+body {
+    background-color: #87CEEB;
+
+    color:rgb(25,25,112)
+  }
+
+h1 {
+  color:rgb(25,25,112);
+}
+
+p {
+  color:rgb(25,25,112)
+}
+.jumbotron {
+    background-image: url("../picture/bacteria.jpeg");
+    background-size: 100% 100%;
+    text-align: center;
+  }
