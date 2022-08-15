@@ -37,6 +37,7 @@ function buildMetadata(sample) {
     // Filter the data for the object with the desired sample number
     var resultArray = metadata.filter(sampleObj => sampleObj.id == sample);
     var result = resultArray[0];
+    
     // Use d3 to select the panel with id of `#sample-metadata`
     var PANEL = d3.select("#sample-metadata");
 
@@ -62,14 +63,24 @@ function buildCharts(sample) {
     var samplesArray = data.samples;
     // 4. Create a variable that filters the samples for the object with the desired sample number.
     var filteredSamples = samplesArray.filter(data => data.id == sample);
-    console.log(filteredSamples);
+    //console.log(filteredSamples);
+
+    // 1c. Create a variable that filters the metadata array for the object with the desired sample number.
+    var metadataArray = data.metadata.filter(data => data.id == sample);
+
     //  5. Create a variable that holds the first sample in the array.
     var firstSample = filteredSamples[0];
+
+    // 2c. Create a variable that holds the first sample in the metadata array.
+    var firstMeta = metadataArray[0];
 
     // 6. Create variables that hold the otu_ids, otu_labels, and sample_values.
     var otuIds = firstSample.otu_ids;
     var otuLabels = firstSample.otu_labels;
     var sampleValues = firstSample.sample_values;
+
+    // 3c. Create a variable that holds the washing frequency.
+    var frequency = metadataArray[0].wfreq;
 
     // 7. Create the yticks for the bar chart.
     // Hint: Get the the top 10 otu_ids and map them in descending order  
@@ -95,28 +106,80 @@ function buildCharts(sample) {
     // 10. Use Plotly to plot the data with the layout. 
     Plotly.newPlot("bar", barData, barLayout);
     
-      // 1. Create the trace for the bubble chart.
-      var bubbleData = [{
-          x: otuIds,
-          y: sampleValues,
-          text: otuLabels,
-          mode: 'markers',
-          marker: {
-            size: sampleValues,
-            color: otuIds,
-            colorscale: "Earth"
-          }
-        }];
-        //console.log(bubbleData);  
-      // 2. Create the layout for the bubble chart.
-      var bubbleLayout = {
-        title: "Bacteria Cultures Per Sample",
-        xaxis: {title: "OTU ID"},
-        hovermode: "closest"       
-      };
-  
-      // 3. Use Plotly to plot the data with the layout.
-      Plotly.newPlot("bubble", bubbleData, bubbleLayout); 
+    // 1. Create the trace for the bubble chart.
+    var bubbleData = [{
+        x: otuIds,
+        y: sampleValues,
+        text: otuLabels,
+        mode: 'markers',
+        marker: {
+          size: sampleValues,
+          color: otuIds,
+          colorscale: "Earth"
+        }
+      }];
+      //console.log(bubbleData);  
+    // 2. Create the layout for the bubble chart.
+    var bubbleLayout = {
+      title: "Bacteria Cultures Per Sample",
+      xaxis: {title: "OTU ID"},
+      hovermode: "closest"       
+    };
+
+    // 3. Use Plotly to plot the data with the layout.
+    Plotly.newPlot("bubble", bubbleData, bubbleLayout); 
+
+    // 4. Create the trace for the gauge chart.
+    var gaugeData = [{
+      domain: { x: [0, 1], y: [0, 1] },
+      value: frequency,
+      title: {text: "<b>Belly Button Washing Frequency</b><br>Scrubs per Week"},
+      type: "indicator",
+      mode: "gauge+number",
+      gauge: {
+        axis: { range: [null, 10] },
+        bar: { color: "black"},
+        steps: [
+          { range: [0, 2], color: "red" },
+          { range: [2, 4], color: "orange" },
+          { range: [4, 6], color: "yellow" },
+          { range: [6, 8], color: "yellowgreen" },
+          { range: [8, 10], color: "green" }],
+        }
+    }];
+    
+    // 5. Create the layout for the gauge chart.
+    var gaugeLayout = { width: 600, 
+        height: 400, 
+        margin: { t: 0, b: 0 }, 
+    };
+
+    // 6. Use Plotly to plot the gauge data and layout.
+    Plotly.newPlot("gauge", gaugeData, gaugeLayout);
+
   });
 
  }
+
+//  var data = [
+//   {
+//     domain: { x: [0, 1], y: [0, 1] },
+//     value: 450,
+//     title: { text: "Speed" },
+//     type: "indicator",
+//     mode: "gauge+number+delta",
+//     delta: { reference: 380 },
+//     gauge: {
+//       axis: { range: [null, 500] },
+//       steps: [
+//         { range: [0, 250], color: "lightgray" },
+//         { range: [250, 400], color: "gray" }
+//       ],
+//       threshold: {
+//         line: { color: "red", width: 4 },
+//         thickness: 0.75,
+//         value: 490
+//       }
+//     }
+//   }
+// ];
